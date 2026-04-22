@@ -5,7 +5,7 @@ export function getApiBase(): string {
 }
 
 export function getToken(): string {
-  return localStorage.getItem('warehouse_api_token') || ''
+  return localStorage.getItem('warehouse_api_token') || import.meta.env.VITE_API_TOKEN || ''
 }
 
 export function isConfigured(): boolean {
