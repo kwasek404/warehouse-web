@@ -4,7 +4,8 @@ import { ArrowLeft, Pencil, Trash2, Loader2, Box, ShoppingBag } from 'lucide-rea
 import Layout from '../components/Layout'
 import Modal from '../components/Modal'
 import PhotoCapture from '../components/PhotoCapture'
-import { useItem, useUpdateItem, useDeleteItem, useCreateCheckout, useReturnCheckout, useAllBoxes } from '../hooks/useApi'
+import TagsPicker from '../components/TagsPicker'
+import { useItem, useUpdateItem, useDeleteItem, useCreateCheckout, useReturnCheckout, useConsumeCheckout, useAllBoxes } from '../hooks/useApi'
 
 export default function ItemDetail() {
   const { id } = useParams<{ id: string }>()
@@ -15,6 +16,7 @@ export default function ItemDetail() {
   const [showCheckout, setShowCheckout] = useState(false)
   const deleteItem = useDeleteItem()
   const returnCheckout = useReturnCheckout()
+  const consumeCheckout = useConsumeCheckout()
 
   async function handleDelete() {
     await deleteItem.mutateAsync(id!)
@@ -94,13 +96,22 @@ export default function ItemDetail() {
                   {co.reason && <p className="text-xs text-gray-500 truncate">{co.reason}</p>}
                   <p className="text-xs text-gray-400">{new Date(co.checked_out_at).toLocaleDateString()}</p>
                 </div>
-                <button
-                  onClick={() => returnCheckout.mutate({ id: co.id })}
-                  disabled={returnCheckout.isPending}
-                  className="px-3 py-1.5 text-xs font-medium text-green-700 bg-green-50 rounded-lg hover:bg-green-100 disabled:opacity-50"
-                >
-                  Return
-                </button>
+                <div className="flex gap-1.5">
+                  <button
+                    onClick={() => returnCheckout.mutate({ id: co.id })}
+                    disabled={returnCheckout.isPending || consumeCheckout.isPending}
+                    className="px-3 py-1.5 text-xs font-medium text-green-700 bg-green-50 rounded-lg hover:bg-green-100 disabled:opacity-50"
+                  >
+                    Return
+                  </button>
+                  <button
+                    onClick={() => consumeCheckout.mutate(co.id)}
+                    disabled={returnCheckout.isPending || consumeCheckout.isPending}
+                    className="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 disabled:opacity-50"
+                  >
+                    Consumed
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
@@ -192,17 +203,22 @@ function EditItemModal({ item, onClose }: { item: ReturnType<typeof useItem>['da
       </button>
     }>
       <form id="edit-item-form" onSubmit={submit} className="space-y-3">
-        {[
-          { label: 'Name *', content: <input value={name} onChange={e => setName(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" /> },
-          { label: 'Quantity', content: <input type="number" min="1" value={quantity} onChange={e => setQuantity(e.target.value)} className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" /> },
-          { label: 'Description', content: <input value={description} onChange={e => setDescription(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" /> },
-          { label: 'Tags', content: <input value={tags} onChange={e => setTags(e.target.value)} placeholder="electronics,tools" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" /> },
-        ].map(({ label, content }) => (
-          <div key={label}>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-            {content}
-          </div>
-        ))}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+          <input value={name} onChange={e => setName(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+          <input type="number" min="1" value={quantity} onChange={e => setQuantity(e.target.value)} className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <input value={description} onChange={e => setDescription(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
+          <TagsPicker value={tags} onChange={setTags} />
+        </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Box</label>
           <select value={boxId} onChange={e => setBoxId(e.target.value)}

@@ -79,6 +79,7 @@ export function useCreateItem() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['items'] })
       qc.invalidateQueries({ queryKey: ['boxes'] })
+      qc.invalidateQueries({ queryKey: ['box'] })
     },
   })
 }
@@ -92,6 +93,7 @@ export function useUpdateItem() {
       qc.invalidateQueries({ queryKey: ['items'] })
       qc.invalidateQueries({ queryKey: ['item', vars.id] })
       qc.invalidateQueries({ queryKey: ['boxes'] })
+      qc.invalidateQueries({ queryKey: ['box'] })
     },
   })
 }
@@ -103,6 +105,7 @@ export function useDeleteItem() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['items'] })
       qc.invalidateQueries({ queryKey: ['boxes'] })
+      qc.invalidateQueries({ queryKey: ['box'] })
     },
   })
 }
@@ -129,5 +132,25 @@ export function useReturnCheckout() {
       qc.invalidateQueries({ queryKey: ['items'] })
       qc.invalidateQueries({ queryKey: ['item'] })
     },
+  })
+}
+
+export function useConsumeCheckout() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => api.checkouts.consume(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['checkouts'] })
+      qc.invalidateQueries({ queryKey: ['items'] })
+      qc.invalidateQueries({ queryKey: ['item'] })
+    },
+  })
+}
+
+export function useItemTags() {
+  return useQuery({
+    queryKey: ['item-tags'],
+    queryFn: api.items.tags,
+    staleTime: 60_000,
   })
 }

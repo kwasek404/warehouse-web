@@ -5,7 +5,6 @@ import BoxDetail from './pages/BoxDetail'
 import ItemDetail from './pages/ItemDetail'
 import Search from './pages/Search'
 import Checkouts from './pages/Checkouts'
-import Settings from './pages/Settings'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,7 +26,6 @@ export default function App() {
           <Route path="/items/:id" element={<ItemDetail />} />
           <Route path="/search" element={<Search />} />
           <Route path="/checkouts" element={<Checkouts />} />
-          <Route path="/settings" element={<Settings />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

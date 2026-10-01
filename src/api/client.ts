@@ -8,10 +8,6 @@ export function getToken(): string {
   return localStorage.getItem('warehouse_api_token') || import.meta.env.VITE_API_TOKEN || ''
 }
 
-export function isConfigured(): boolean {
-  return !!(getApiBase() && getToken())
-}
-
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const base = getApiBase()
   const token = getToken()
@@ -58,6 +54,7 @@ export const api = {
       return request<Item[]>(`/items${query}`)
     },
     get: (id: string) => request<ItemWithCheckouts>(`/items/${id}`),
+    tags: () => request<string[]>('/items/tags'),
     create: (body: { name: string; description?: string | null; quantity?: number; box_id?: string | null; photo_url?: string | null; tags?: string | null }) =>
       request<Item>('/items', { method: 'POST', body: JSON.stringify(body) }),
     update: (id: string, body: Partial<{ name: string; description: string | null; quantity: number; box_id: string | null; photo_url: string | null; tags: string | null }>) =>
@@ -74,6 +71,8 @@ export const api = {
         method: 'PUT',
         body: JSON.stringify(returned_quantity !== undefined ? { returned_quantity } : {}),
       }),
+    consume: (id: string) =>
+      request<Checkout>(`/checkouts/${id}/consume`, { method: 'PUT' }),
   },
 
   photos: {

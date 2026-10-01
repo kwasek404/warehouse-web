@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { Archive, Search, ShoppingBag, Settings } from 'lucide-react'
+import { Archive, Search, ShoppingBag } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 interface Props {
@@ -26,7 +26,6 @@ export default function Layout({ children, title, back, actions }: Props) {
         <NavItem to="/boxes" icon={<Archive size={22} />} label="Boxes" />
         <NavItem to="/search" icon={<Search size={22} />} label="Search" />
         <NavItem to="/checkouts" icon={<ShoppingBag size={22} />} label="Out" />
-        <NavItem to="/settings" icon={<Settings size={22} />} label="Settings" />
       </nav>
     </div>
   )

@@ -4,6 +4,7 @@ import { Plus, Box, ChevronRight, Package, Pencil, Trash2, Loader2, ArrowLeft } 
 import Layout from '../components/Layout'
 import Modal from '../components/Modal'
 import PhotoCapture from '../components/PhotoCapture'
+import TagsPicker from '../components/TagsPicker'
 import { useBox, useBoxes, useCreateBox, useUpdateBox, useDeleteBox, useCreateItem } from '../hooks/useApi'
 import type { Box as BoxType } from '../api/types'
 
@@ -254,8 +255,7 @@ function ItemFormModal({ onClose, boxId }: { onClose: () => void; boxId?: string
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </Field>
         <Field label="Tags">
-          <input value={tags} onChange={e => setTags(e.target.value)} placeholder="electronics,tools"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <TagsPicker value={tags} onChange={setTags} />
         </Field>
         <Field label="Photo">
           <PhotoCapture value={photoUrl} onChange={setPhotoUrl} />
